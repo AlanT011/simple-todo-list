@@ -6,10 +6,9 @@ on:
       - main
       - master
 
-jobs:
+jobs: # This must contain both 'test' and 'docker'
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,7 +32,7 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
           
-docker:
+  docker: # Ensure this is aligned with 'test' and under 'jobs'
     runs-on: ubuntu-latest
     needs: test
     permissions:
@@ -67,7 +66,7 @@ docker:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: .  # Added the missing dot here
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
