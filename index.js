@@ -83,8 +83,39 @@ app.put('/api/todos/:id', (req, res) => {
     return res.status(404).json({ error: 'Todo not found' });
   }
   
-  todos[todoIndex].completed = !todos[todoIndex].completed;
+  // If request body contains explicit fields, allow updating them
+  if (req.body && typeof req.body.completed === 'boolean') {
+    todos[todoIndex].completed = req.body.completed;
+  } else {
+    // maintain existing behavior: toggle completion when no explicit value provided
+    todos[todoIndex].completed = !todos[todoIndex].completed;
+  }
   
+  if (writeTodos(todos)) {
+    res.status(200).json(todos[todoIndex]);
+  } else {
+    res.status(500).json({ error: 'Failed to update todo' });
+  }
+});
+
+// Edit todo text
+app.patch('/api/todos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { text } = req.body;
+
+  if (text == null || typeof text !== 'string' || text.trim() === '') {
+    return res.status(400).json({ error: 'Todo text is required' });
+  }
+
+  const todos = readTodos();
+  const todoIndex = todos.findIndex(t => t.id === id);
+
+  if (todoIndex === -1) {
+    return res.status(404).json({ error: 'Todo not found' });
+  }
+
+  todos[todoIndex].text = text.trim();
+
   if (writeTodos(todos)) {
     res.status(200).json(todos[todoIndex]);
   } else {

@@ -156,6 +156,57 @@ describe('Todo API Endpoints', () => {
     });
   });
 
+  describe('PATCH /api/todos/:id', () => {
+    test('should update todo text', async () => {
+      const createResponse = await request(app)
+        .post('/api/todos')
+        .send({ text: 'Old text' });
+
+      const todoId = createResponse.body.id;
+
+      const response = await request(app)
+        .patch(`/api/todos/${todoId}`)
+        .send({ text: 'Updated text' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('text', 'Updated text');
+
+      const getResponse = await request(app).get('/api/todos');
+      expect(getResponse.body[0]).toHaveProperty('text', 'Updated text');
+    });
+
+    test('should return 400 if text is missing or empty', async () => {
+      const createResponse = await request(app)
+        .post('/api/todos')
+        .send({ text: 'Initial' });
+
+      const todoId = createResponse.body.id;
+
+      const resMissing = await request(app)
+        .patch(`/api/todos/${todoId}`)
+        .send({});
+
+      expect(resMissing.status).toBe(400);
+      expect(resMissing.body).toHaveProperty('error', 'Todo text is required');
+
+      const resEmpty = await request(app)
+        .patch(`/api/todos/${todoId}`)
+        .send({ text: '' });
+
+      expect(resEmpty.status).toBe(400);
+      expect(resEmpty.body).toHaveProperty('error', 'Todo text is required');
+    });
+
+    test('should return 404 if todo not found', async () => {
+      const response = await request(app)
+        .patch('/api/todos/999999')
+        .send({ text: 'Does not exist' });
+
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty('error', 'Todo not found');
+    });
+  });
+
   describe('DELETE /api/todos/:id', () => {
     test('should delete a todo', async () => {
       // Create a todo
