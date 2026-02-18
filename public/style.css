@@ -126,6 +126,26 @@ h1 {
     background: #ff3838;
 }
 
+.edit-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.edit-btn:hover {
+    background: #2b82c9;
+    transform: translateY(-1px);
+}
+
+.edit-btn + .delete-btn {
+    margin-left: 8px;
+}
+
 .stats {
     display: flex;
     justify-content: space-between;

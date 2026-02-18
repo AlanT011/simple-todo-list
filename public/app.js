@@ -147,7 +147,7 @@ function renderTodos() {
                     onchange="toggleTodo(${todo.id})"
                 />
                 <span class="todo-text">${escapeHtml(todo.text)}</span>
-                <button class="edit-btn" onclick="editTodo(${todo.id})">Edit</button>
+                <button type="button" class="edit-btn" onclick="editTodo(${todo.id})" aria-label="Edit todo" title="Edit">Edit</button>
                 <button class="delete-btn" onclick="deleteTodo(${todo.id})">Delete</button>
             </div>
         `).join('');
